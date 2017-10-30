@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BleGattDemo</string>
+    <string name="action_bar">BLE Device Scan</string>
+</resources>
