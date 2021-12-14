@@ -28,6 +28,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.util.Log;
+
 
 public class DeviceScanActivity extends AppCompatActivity {
     private ArrayList<BluetoothDevice> mLeDevices;//设备列表集合，在适配器的构造方法中实例化，即new一个适配，就生成该对象
@@ -39,12 +41,14 @@ public class DeviceScanActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 1;//请求打开蓝牙的请求代码
     // Stops scanning after 10 seconds.10秒后停止扫描，在Handler中使用
     private static final long SCAN_PERIOD = 10000;
+    private String TAG = "DeviceScanActivity";
 
     // Device scan callback.系统将扫描到的结果通过该回调方法的参数传递出来
     private BluetoothAdapter.LeScanCallback  mLeScanCallback =
             new BluetoothAdapter.LeScanCallback() {
                 @Override
                 public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+                    Log.d(TAG,"onLeScan device name="+device.getName()+",address="+device.getAddress()+",rssi="+rssi+",scanRecord="+scanRecord);
                     //该线程用于更新UI
                     runOnUiThread(new Runnable() {
                         @Override
@@ -143,6 +147,7 @@ public class DeviceScanActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
+        Log.d(TAG,"onResume BT isEnabled="+mBluetoothAdapter.isEnabled());
         // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
         // fire an intent to display a dialog asking the user to grant permission to enable it.
         if (!mBluetoothAdapter.isEnabled()) {
@@ -170,12 +175,14 @@ public class DeviceScanActivity extends AppCompatActivity {
     @Override
     protected void onPause(){
         super.onPause();
+        Log.d(TAG,"onPause BT isEnabled="+mBluetoothAdapter.isEnabled());
         scanLeDevice(false);
         mLeDeviceListAdapter.clear();
     }
 
 
     private void scanLeDevice(final boolean enable) {
+        Log.d(TAG,"scanLeDevice do enable="+enable);
         if (enable) {
             // Stops scanning after a pre-defined scan period.该段代码表示扫描10秒后停止，
             // mhandler相当于计时10秒后执行停止扫描的操作
@@ -183,15 +190,18 @@ public class DeviceScanActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     mScanning = false;
+                    Log.d(TAG,"scanLeDevice stopLeScan after 10 seconds");
                     mBluetoothAdapter.stopLeScan(mLeScanCallback);//即10秒后执行该语句
                     invalidateOptionsMenu();
                 }
             }, SCAN_PERIOD);
 
             mScanning = true;
+            Log.d(TAG,"scanLeDevice startLeScan");
             mBluetoothAdapter.startLeScan(mLeScanCallback);
         } else {
             mScanning = false;
+            Log.d(TAG,"scanLeDevice stopLeScan");
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
         }
         invalidateOptionsMenu();

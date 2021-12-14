@@ -284,7 +284,7 @@ public class DeviceControlActivity extends AppCompatActivity {
                     LIST_NAME,  unknownServiceString);
             currentServiceData.put(LIST_UUID, uuid);
             gattServiceData.add(currentServiceData);
-
+            Log.d(TAG,">service uuid:"+uuid);
             ArrayList<HashMap<String, String>> gattCharacteristicGroupData =
                     new ArrayList<HashMap<String, String>>();
             List<BluetoothGattCharacteristic> gattCharacteristics =
@@ -297,6 +297,8 @@ public class DeviceControlActivity extends AppCompatActivity {
                 charas.add(gattCharacteristic);
                 HashMap<String, String> currentCharaData = new HashMap<String, String>();
                 uuid = gattCharacteristic.getUuid().toString();
+                Log.d(TAG,"--->characteristic prop:"+String.valueOf(gattCharacteristic.getProperties())+",uuid:"+uuid);
+                uuid = "prop:"+String.valueOf(gattCharacteristic.getProperties())+","+uuid;
                 currentCharaData.put(
                         LIST_NAME,  unknownCharaString);
                 currentCharaData.put(LIST_UUID, uuid);
